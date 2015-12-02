@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace NoSql.Repositories
 {
-    public class MemoryRepository<T> : IRepository<T> where T : IId 
+    public class MemoryRepository<T> : IRepository<T> where T : IId
     {
         private ConcurrentDictionary<Guid, T> dictionary = new ConcurrentDictionary<Guid, T>();
 
@@ -16,14 +16,24 @@ namespace NoSql.Repositories
 
         }
 
-        public Task<IEnumerable<Guid>> Create(params T[] item)
+        public Task<IEnumerable<Guid>> Create(params T[] items)
         {
-            throw new NotImplementedException();
+            var results = new List<Guid>();
+            foreach (var item in items)
+            {
+                item.Id = Guid.NewGuid();
+                if (dictionary.TryAdd(item.Id, item))
+                    results.Add(item.Id);
+            }
+            return Task.FromResult(results as IEnumerable<Guid>);
         }
 
-        public Task Delete(params Guid[] Id)
+        public async Task Delete(params Guid[] Ids)
         {
-            throw new NotImplementedException();
+            foreach (var item in Ids)
+            {
+
+            }
         }
 
         public Task<IEnumerable<bool>> Exist(params Guid[] Ids)

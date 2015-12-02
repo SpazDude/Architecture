@@ -7,12 +7,12 @@ namespace NoSql.Repositories
 {
     public interface IRepository<T> where T : IId
     {
-        Task<IEnumerable<Guid>> Create(params T[] item);
+        Task<IEnumerable<Guid>> Create(params T[] items);
         Task<IEnumerable<bool>> Exist(params Guid[] Ids);
         Task<IEnumerable<T>> GetAll() ;
-        Task<IEnumerable<T>> GetById(params Guid[] Id);
+        Task<IEnumerable<T>> GetById(params Guid[] Ids);
         Task<IEnumerable<T>> GetByExample(string jsonText);
-        Task Update(params T[] item);
-        Task Delete(params Guid[] Id);
+        Task Update(params T[] items);
+        Task Delete(params Guid[] Ids);
     }
 }
