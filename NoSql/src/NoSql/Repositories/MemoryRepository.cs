@@ -19,21 +19,21 @@ namespace NoSql.Repositories
         public Task<IEnumerable<Guid>> Create(params T[] items)
         {
             var results = new List<Guid>();
-            foreach (var item in items)
+            Parallel.ForEach(items, (item) =>
             {
                 item.Id = Guid.NewGuid();
                 if (dictionary.TryAdd(item.Id, item))
                     results.Add(item.Id);
-            }
+            });
             return Task.FromResult(results as IEnumerable<Guid>);
         }
 
         public async Task Delete(params Guid[] Ids)
         {
-            foreach (var item in Ids)
-            {
-
-            }
+            Parallel.ForEach(Ids, (id) => {
+                T value;
+                dictionary.TryRemove(id, out value);
+            });
         }
 
         public Task<IEnumerable<bool>> Exist(params Guid[] Ids)
