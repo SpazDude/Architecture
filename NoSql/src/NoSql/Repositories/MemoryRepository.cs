@@ -1,7 +1,6 @@
 ﻿using Models;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -16,49 +15,69 @@ namespace NoSql.Repositories
 
         }
 
-        public Task<IEnumerable<Guid>> Create(params T[] items)
+        public Task<Guid[]> Create(params T[] items)
         {
-            var results = new List<Guid>();
-            Parallel.ForEach(items, (item) =>
+            return Task<Guid[]>.Run(() =>
             {
-                item.Id = Guid.NewGuid();
-                if (dictionary.TryAdd(item.Id, item))
-                    results.Add(item.Id);
+                return items.Select(item =>
+                {
+                    item.Id = Guid.NewGuid();
+                    dictionary[item.Id] = item;
+                    return item.Id;
+                }).ToArray();
             });
-            return Task.FromResult(results as IEnumerable<Guid>);
         }
 
         public async Task Delete(params Guid[] Ids)
         {
-            Parallel.ForEach(Ids, (id) => {
-                T value;
-                dictionary.TryRemove(id, out value);
+            await Task.Run(() =>
+            {
+                Parallel.ForEach(Ids, id =>
+                {
+                    T value;
+                    dictionary.TryRemove(id, out value);
+                });
             });
         }
 
-        public Task<IEnumerable<bool>> Exist(params Guid[] Ids)
+        public Task<bool[]> Exist(params Guid[] Ids)
+        {
+            return Task<bool[]>.Run(() =>
+            {
+                return Ids.Select(id => dictionary.ContainsKey(id)).ToArray();
+            });
+        }
+
+        public Task<T[]> GetAll()
+        {
+            return Task<T[]>.Run(() =>
+            {
+                return dictionary.Values.ToArray();
+            });
+        }
+
+        public Task<T[]> GetByExample(string jsonText)
         {
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<T>> GetAll()
+        public Task<T[]> GetById(params Guid[] Ids)
         {
-            throw new NotImplementedException();
+            return Task<T[]>.Run(() =>
+            {
+                return Ids.Select(id => dictionary[id]).ToArray();
+            });
         }
 
-        public Task<IEnumerable<T>> GetByExample(string jsonText)
+        public async Task Update(params T[] items)
         {
-            throw new NotImplementedException();
-        }
-
-        public Task<IEnumerable<T>> GetById(params Guid[] Id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task Update(params T[] item)
-        {
-            throw new NotImplementedException();
+            await Task.Run(() =>
+            {
+                Parallel.ForEach(items, item =>
+                {
+                    dictionary[item.Id] = item;
+                });
+            });
         }
     }
 }
