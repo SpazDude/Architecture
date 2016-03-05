@@ -1,81 +1,90 @@
 ﻿using Models;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Concurrent;
+using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace NoSql.Repositories
 {
-    public class MemoryRepository<T> : IRepository<T> where T : IId
+    public class MemoryRepository : IRepository
     {
-        private ConcurrentDictionary<Guid, T> dictionary = new ConcurrentDictionary<Guid, T>();
+        private ConcurrentDictionary<string, ConcurrentDictionary<Guid, object>> dictionary =
+            new ConcurrentDictionary<string, ConcurrentDictionary<Guid, object>>();
 
         public MemoryRepository()
         {
 
         }
 
-        public Task<Guid[]> Create(params T[] items)
+        public Task<Guid[]> Create(string resource, params string[] items) 
         {
             return Task<Guid[]>.Run(() =>
             {
-                return items.Select(item =>
+                return items.Select(jsonString =>
                 {
-                    item.Id = Guid.NewGuid();
-                    dictionary[item.Id] = item;
-                    return item.Id;
+                    var guid = Guid.NewGuid();
+                    var converter = new ExpandoObjectConverter();
+                    dynamic item = JsonConvert.DeserializeObject<ExpandoObject>(jsonString, converter);
+                    item.Id = guid;
+                    dictionary[resource][item.Id] = item;
+                    return guid;
                 }).ToArray();
             });
         }
 
-        public async Task Delete(params Guid[] Ids)
+        public async Task Delete(string resource, params Guid[] Ids) 
         {
             await Task.Run(() =>
             {
                 Parallel.ForEach(Ids, id =>
                 {
-                    T value;
-                    dictionary.TryRemove(id, out value);
+                    object value;
+                    dictionary[resource].TryRemove(id, out value);
                 });
             });
         }
 
-        public Task<bool[]> Exist(params Guid[] Ids)
+        public Task<bool[]> Exist(string resource, params Guid[] Ids) 
         {
             return Task<bool[]>.Run(() =>
             {
-                return Ids.Select(id => dictionary.ContainsKey(id)).ToArray();
+                return Ids.Select(id => dictionary[resource].ContainsKey(id)).ToArray();
             });
         }
 
-        public Task<T[]> GetAll()
+        public Task<string[]> GetAll(string resource) 
         {
-            return Task<T[]>.Run(() =>
+            return Task<string[]>.Run(() =>
             {
-                return dictionary.Values.ToArray();
+                return dictionary[resource].Values.Cast<string>().ToArray();
             });
         }
 
-        public Task<T[]> GetByExample(string jsonText)
+        public Task<string[]> GetByExample(string resource, string jsonText) 
         {
             throw new NotImplementedException();
         }
 
-        public Task<T[]> GetById(params Guid[] Ids)
+        public Task<string[]> GetById(string resource, params Guid[] Ids) 
         {
-            return Task<T[]>.Run(() =>
+            return Task<string[]>.Run(() =>
             {
-                return Ids.Select(id => dictionary[id]).ToArray();
+                return Ids.Select(id => dictionary[resource][id]).Cast<string>().ToArray();
             });
         }
 
-        public async Task Update(params T[] items)
+        public async Task Update(string resource, params string[] items) 
         {
             await Task.Run(() =>
             {
-                Parallel.ForEach(items, item =>
+                Parallel.ForEach(items, jsonString =>
                 {
-                    dictionary[item.Id] = item;
+                    var converter = new ExpandoObjectConverter();
+                    dynamic item = JsonConvert.DeserializeObject<ExpandoObject>(jsonString, converter);
+                    dictionary[resource][item.Id] = item;
                 });
             });
         }

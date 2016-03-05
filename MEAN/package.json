@@ -1,0 +1,11 @@
+{
+  "name": "meandemo",
+  "version": "1.0.0",
+  "description": "a sample MEAN stack",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "author": "Aaron Wells",
+  "license": "ISC"
+}

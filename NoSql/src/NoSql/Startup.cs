@@ -7,6 +7,7 @@ using Microsoft.AspNet.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using NoSql.Repositories;
 
 namespace NoSql
 {
@@ -28,6 +29,8 @@ namespace NoSql
         {
             // Add framework services.
             services.AddMvc();
+
+            services.AddScoped<IRepository, MemoryRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
