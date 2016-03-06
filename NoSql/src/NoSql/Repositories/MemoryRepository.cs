@@ -11,15 +11,15 @@ namespace NoSql.Repositories
 {
     public class MemoryRepository : IRepository
     {
-        private ConcurrentDictionary<string, ConcurrentDictionary<Guid, object>> dictionary =
-            new ConcurrentDictionary<string, ConcurrentDictionary<Guid, object>>();
+        private ConcurrentDictionary<string, ConcurrentDictionary<Guid, dynamic>> dictionary =
+            new ConcurrentDictionary<string, ConcurrentDictionary<Guid, dynamic>>();
 
         public MemoryRepository()
         {
 
         }
 
-        public Task<Guid[]> Create(string resource, params string[] items) 
+        public Task<Guid[]> Create(string resource, params dynamic[] items) 
         {
             return Task<Guid[]>.Run(() =>
             {
@@ -55,28 +55,28 @@ namespace NoSql.Repositories
             });
         }
 
-        public Task<string[]> GetAll(string resource) 
+        public Task<dynamic[]> GetAll(string resource) 
         {
             return Task<string[]>.Run(() =>
             {
-                return dictionary[resource].Values.Cast<string>().ToArray();
+                return dictionary[resource].Values.ToArray();
             });
         }
 
-        public Task<string[]> GetByExample(string resource, string jsonText) 
+        public Task<dynamic[]> GetByExample(string resource, dynamic jsonText) 
         {
             throw new NotImplementedException();
         }
 
-        public Task<string[]> GetById(string resource, params Guid[] Ids) 
+        public Task<dynamic[]> GetById(string resource, params Guid[] Ids) 
         {
             return Task<string[]>.Run(() =>
             {
-                return Ids.Select(id => dictionary[resource][id]).Cast<string>().ToArray();
+                return Ids.Select(id => dictionary[resource][id]).ToArray();
             });
         }
 
-        public async Task Update(string resource, params string[] items) 
+        public async Task Update(string resource, params dynamic[] items) 
         {
             await Task.Run(() =>
             {

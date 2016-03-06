@@ -7,12 +7,12 @@ namespace NoSql.Repositories
 {
     public interface IRepository
     {
-        Task<Guid[]> Create(string resource, params string[] items);
+        Task<Guid[]> Create(string resource, params dynamic[] items);
         Task<bool[]> Exist(string resource, params Guid[] Ids);
-        Task<string[]> GetAll(string resource);
-        Task<string[]> GetById(string resource, params Guid[] Ids);
-        Task<string[]> GetByExample(string resource, string jsonText);
-        Task Update(string resource, params string[] items);
+        Task<dynamic[]> GetAll(string resource);
+        Task<dynamic[]> GetById(string resource, params Guid[] Ids);
+        Task<dynamic[]> GetByExample(string resource, dynamic jsonText);
+        Task Update(string resource, params dynamic[] items);
         Task Delete(string resource, params Guid[] Ids);
     }
 }

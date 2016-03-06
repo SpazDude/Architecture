@@ -20,37 +20,37 @@ namespace NoSql.Controllers
 
         // GET: api/values
         [HttpGet]
-        public IEnumerable<string> Get(string resource)
+        public async Task<dynamic[]> Get(string resource)
         {
-            
-
-            return new string[] { "value1", "value2" };
+            return await _repository.GetAll(resource);
         }
 
         // GET api/values/5
         [HttpGet("{id}")]
-        public string Get(string resource, Guid id)
+        public async Task<dynamic[]> Get(string resource, params Guid[] id)
         {
-            return "value";
+            return await _repository.GetById(resource, id);
         }
 
         // POST api/values
         [HttpPost]
-        public void Post(string resource, [FromBody]string value)
+        public void Post(string resource, [FromBody]dynamic value)
         {
-            
+            _repository.Create(resource, value);
         }
 
         // PUT api/values/5
         [HttpPut("{id}")]
-        public void Put(string resource, Guid id, [FromBody]string value)
+        public void Put(string resource, Guid id, [FromBody]dynamic value)
         {
+            _repository.Update(resource, value);
         }
 
         // DELETE api/values/5
         [HttpDelete("{id}")]
-        public void Delete(string resource, Guid id)
+        public void Delete(string resource, params Guid[] id)
         {
+            _repository.Delete(resource, id);
         }
     }
 }
