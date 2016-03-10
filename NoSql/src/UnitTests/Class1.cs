@@ -11,11 +11,20 @@ namespace UnitTests
     // To enable this option, right-click on the project and select the Properties menu item. In the Build tab select "Produce outputs on build".
     public class Class1
     {
+
+        IRepository repository = new MemoryRepository();
+        dynamic[] people;
+
+        public Class1()
+        {
+            people = new dynamic[] {
+            };
+            repository.Create("Person", people);
+        }
+
         [Fact]
         public void UniTest1()
         {
-            var repository = new MemoryRepository();
-            
             Assert.True(true);
         }
     }

@@ -3,9 +3,6 @@
   "version": 2,
   "targets": {
     "DNX,Version=v4.5.1": {
-      "gemini/1.3.2": {
-        "type": "package"
-      },
       "Microsoft.AspNet.Antiforgery/1.0.0-rc1-final": {
         "type": "package",
         "dependencies": {
@@ -1443,7 +1440,6 @@
         "type": "project",
         "framework": "DNX,Version=v4.5.1",
         "dependencies": {
-          "gemini": "1.3.2",
           "Microsoft.AspNet.IISPlatformHandler": "1.0.0-rc1-final",
           "Microsoft.AspNet.Mvc": "6.0.0-rc1-final",
           "Microsoft.AspNet.Server.Kestrel": "1.0.0-rc1-final",
@@ -1784,9 +1780,6 @@
       }
     },
     "DNXCore,Version=v5.0": {
-      "gemini/1.3.2": {
-        "type": "package"
-      },
       "Microsoft.AspNet.Antiforgery/1.0.0-rc1-final": {
         "type": "package",
         "dependencies": {
@@ -3086,7 +3079,6 @@
         "type": "project",
         "framework": "DNXCore,Version=v5.0",
         "dependencies": {
-          "gemini": "1.3.2",
           "Microsoft.AspNet.IISPlatformHandler": "1.0.0-rc1-final",
           "Microsoft.AspNet.Mvc": "6.0.0-rc1-final",
           "Microsoft.AspNet.Server.Kestrel": "1.0.0-rc1-final",
@@ -4256,9 +4248,6 @@
       }
     },
     "DNX,Version=v4.5.1/win7-x86": {
-      "gemini/1.3.2": {
-        "type": "package"
-      },
       "Microsoft.AspNet.Antiforgery/1.0.0-rc1-final": {
         "type": "package",
         "dependencies": {
@@ -5699,7 +5688,6 @@
         "type": "project",
         "framework": "DNX,Version=v4.5.1",
         "dependencies": {
-          "gemini": "1.3.2",
           "Microsoft.AspNet.IISPlatformHandler": "1.0.0-rc1-final",
           "Microsoft.AspNet.Mvc": "6.0.0-rc1-final",
           "Microsoft.AspNet.Server.Kestrel": "1.0.0-rc1-final",
@@ -6040,9 +6028,6 @@
       }
     },
     "DNX,Version=v4.5.1/win7-x64": {
-      "gemini/1.3.2": {
-        "type": "package"
-      },
       "Microsoft.AspNet.Antiforgery/1.0.0-rc1-final": {
         "type": "package",
         "dependencies": {
@@ -7483,7 +7468,6 @@
         "type": "project",
         "framework": "DNX,Version=v4.5.1",
         "dependencies": {
-          "gemini": "1.3.2",
           "Microsoft.AspNet.IISPlatformHandler": "1.0.0-rc1-final",
           "Microsoft.AspNet.Mvc": "6.0.0-rc1-final",
           "Microsoft.AspNet.Server.Kestrel": "1.0.0-rc1-final",
@@ -7824,9 +7808,6 @@
       }
     },
     "DNXCore,Version=v5.0/win7-x86": {
-      "gemini/1.3.2": {
-        "type": "package"
-      },
       "Microsoft.AspNet.Antiforgery/1.0.0-rc1-final": {
         "type": "package",
         "dependencies": {
@@ -9129,7 +9110,6 @@
         "type": "project",
         "framework": "DNXCore,Version=v5.0",
         "dependencies": {
-          "gemini": "1.3.2",
           "Microsoft.AspNet.IISPlatformHandler": "1.0.0-rc1-final",
           "Microsoft.AspNet.Mvc": "6.0.0-rc1-final",
           "Microsoft.AspNet.Server.Kestrel": "1.0.0-rc1-final",
@@ -10754,9 +10734,6 @@
       }
     },
     "DNXCore,Version=v5.0/win7-x64": {
-      "gemini/1.3.2": {
-        "type": "package"
-      },
       "Microsoft.AspNet.Antiforgery/1.0.0-rc1-final": {
         "type": "package",
         "dependencies": {
@@ -12059,7 +12036,6 @@
         "type": "project",
         "framework": "DNXCore,Version=v5.0",
         "dependencies": {
-          "gemini": "1.3.2",
           "Microsoft.AspNet.IISPlatformHandler": "1.0.0-rc1-final",
           "Microsoft.AspNet.Mvc": "6.0.0-rc1-final",
           "Microsoft.AspNet.Server.Kestrel": "1.0.0-rc1-final",
@@ -13692,19 +13668,6 @@
     "NoSql/1.0.0": {
       "type": "project",
       "path": "../NoSql/project.json"
-    },
-    "gemini/1.3.2": {
-      "type": "package",
-      "sha512": "U+jvTsFW5jRlFlijhz/0BERAfR/O5SNO7NWEbhXSaErHidvr9V//CIEqRmFUabfIn9Cguaq5RE6A9Xdn4Crxtg==",
-      "files": [
-        "content/Oak/Gemini.cs",
-        "content/Oak/GeminiInfo.cs",
-        "content/Oak/ObjectExtensions.cs",
-        "content/Oak/ReleaseNotes.txt",
-        "gemini.1.3.2.nupkg",
-        "gemini.1.3.2.nupkg.sha512",
-        "gemini.nuspec"
-      ]
     },
     "Microsoft.AspNet.Antiforgery/1.0.0-rc1-final": {
       "type": "package",
