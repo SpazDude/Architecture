@@ -19,23 +19,25 @@ namespace NoSql.Repositories
 
         }
 
-        public Task<Guid[]> Create(string resource, params dynamic[] items) 
+        public Task<Guid[]> Create(string resource, params dynamic[] items)
         {
             return Task<Guid[]>.Run(() =>
             {
-                return items.Select(jsonString =>
+                foreach (dynamic item in items)
                 {
                     var guid = Guid.NewGuid();
-                    var converter = new ExpandoObjectConverter();
-                    dynamic item = JsonConvert.DeserializeObject<ExpandoObject>(jsonString, converter);
                     item.Id = guid;
-                    dictionary[resource][item.Id] = item;
-                    return guid;
-                }).ToArray();
+                    if (!dictionary.ContainsKey(resource))
+                    {
+                        dictionary.TryAdd(resource, new ConcurrentDictionary<Guid, dynamic>());
+                    }
+                    dictionary[resource].AddOrUpdate(guid, g => item, (g, i) => item);
+                }
+                return items.Select(item => (Guid)(item.Id)).ToArray();
             });
         }
 
-        public async Task Delete(string resource, params Guid[] Ids) 
+        public async Task Delete(string resource, params Guid[] Ids)
         {
             await Task.Run(() =>
             {
@@ -47,7 +49,7 @@ namespace NoSql.Repositories
             });
         }
 
-        public Task<bool[]> Exist(string resource, params Guid[] Ids) 
+        public Task<bool[]> Exist(string resource, params Guid[] Ids)
         {
             return Task<bool[]>.Run(() =>
             {
@@ -55,7 +57,7 @@ namespace NoSql.Repositories
             });
         }
 
-        public Task<dynamic[]> GetAll(string resource) 
+        public Task<dynamic[]> GetAll(string resource)
         {
             return Task<string[]>.Run(() =>
             {
@@ -63,12 +65,12 @@ namespace NoSql.Repositories
             });
         }
 
-        public Task<dynamic[]> GetByExample(string resource, dynamic jsonText) 
+        public Task<dynamic[]> GetByExample(string resource, dynamic jsonText)
         {
             throw new NotImplementedException();
         }
 
-        public Task<dynamic[]> GetById(string resource, params Guid[] Ids) 
+        public Task<dynamic[]> GetById(string resource, params Guid[] Ids)
         {
             return Task<string[]>.Run(() =>
             {
@@ -76,7 +78,7 @@ namespace NoSql.Repositories
             });
         }
 
-        public async Task Update(string resource, params dynamic[] items) 
+        public async Task Update(string resource, params dynamic[] items)
         {
             await Task.Run(() =>
             {
