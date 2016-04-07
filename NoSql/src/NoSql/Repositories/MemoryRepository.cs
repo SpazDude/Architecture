@@ -1,9 +1,5 @@
-﻿using Models;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
-using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -14,9 +10,11 @@ namespace NoSql.Repositories
         private ConcurrentDictionary<string, ConcurrentDictionary<Guid, dynamic>> dictionary =
             new ConcurrentDictionary<string, ConcurrentDictionary<Guid, dynamic>>();
 
-        public MemoryRepository()
-        {
+        private IIdFactory _idFactory;
 
+        public MemoryRepository(IIdFactory idFactory)
+        {
+            _idFactory = idFactory;
         }
 
         public Task<Guid[]> Create(string resource, params dynamic[] items)
@@ -25,7 +23,7 @@ namespace NoSql.Repositories
             {
                 foreach (dynamic item in items)
                 {
-                    var guid = Guid.NewGuid();
+                    var guid = _idFactory.NewGuid();
                     item.Id = guid;
                     if (!dictionary.ContainsKey(resource))
                     {
@@ -61,7 +59,10 @@ namespace NoSql.Repositories
         {
             return Task<string[]>.Run(() =>
             {
-                return dictionary[resource].Values.ToArray();
+                if (dictionary.Keys.Contains(resource))
+                    return dictionary[resource].Values.ToArray();
+                else
+                    return new dynamic[0];
             });
         }
 
@@ -82,10 +83,8 @@ namespace NoSql.Repositories
         {
             await Task.Run(() =>
             {
-                Parallel.ForEach(items, jsonString =>
+                Parallel.ForEach(items, item =>
                 {
-                    var converter = new ExpandoObjectConverter();
-                    dynamic item = JsonConvert.DeserializeObject<ExpandoObject>(jsonString, converter);
                     dictionary[resource][item.Id] = item;
                 });
             });

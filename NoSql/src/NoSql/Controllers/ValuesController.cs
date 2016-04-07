@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Mvc;
 using NoSql.Repositories;
@@ -8,7 +6,6 @@ using NoSql.Repositories;
 namespace NoSql.Controllers
 {
     [Route("api/{resource}")]
-    //[Route("api/[controller]")]
     public class ValuesController : Controller
     {
         private IRepository _repository;

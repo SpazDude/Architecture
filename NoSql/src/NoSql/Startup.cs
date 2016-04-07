@@ -29,7 +29,6 @@ namespace NoSql
         {
             // Add framework services.
             services.AddMvc();
-
             services.AddScoped<IRepository, MemoryRepository>();
         }
 
