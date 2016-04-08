@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNet.Builder;
+﻿using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NoSql.Repositories;
+using Newtonsoft.Json.Linq;
 
 namespace NoSql
 {
@@ -29,7 +26,8 @@ namespace NoSql
         {
             // Add framework services.
             services.AddMvc();
-            services.AddScoped<IRepository, MemoryRepository>();
+            services.AddScoped<IRepository<dynamic>, DynamicMemoryRepository>();
+            services.AddScoped<IRepository<JObject>, JObjectMemoryRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

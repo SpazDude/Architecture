@@ -5,14 +5,14 @@ using System.Threading.Tasks;
 
 namespace NoSql.Repositories
 {
-    public interface IRepository
+    public interface IRepository<T>
     {
-        Task<Guid[]> Create(string resource, params dynamic[] items);
+        Task<Guid[]> Create(string resource, params T[] items);
         Task<bool[]> Exist(string resource, params Guid[] Ids);
-        Task<dynamic[]> GetAll(string resource);
-        Task<dynamic[]> GetById(string resource, params Guid[] Ids);
-        Task<dynamic[]> GetByExample(string resource, dynamic jsonText);
-        Task Update(string resource, params dynamic[] items);
+        Task<T[]> GetAll(string resource);
+        Task<T[]> GetById(string resource, params Guid[] Ids);
+        Task<T[]> GetByExample(string resource, dynamic jsonText);
+        Task Update(string resource, params T[] items);
         Task Delete(string resource, params Guid[] Ids);
     }
 }

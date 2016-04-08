@@ -29,7 +29,7 @@ namespace UnitTests
             }, services =>
             {
                 services.AddMvc();
-                services.AddScoped<IRepository, MemoryRepository>();
+                services.AddScoped<IRepository<dynamic>, DynamicMemoryRepository>();
                 services.AddScoped<IIdFactory, IdFactory>();
             });
         }

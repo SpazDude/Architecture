@@ -6,11 +6,9 @@ using Xunit;
 
 namespace UnitTests
 {
-    // This project can output the Class library as a NuGet Package.
-    // To enable this option, right-click on the project and select the Properties menu item. In the Build tab select "Produce outputs on build".
     public class MemoryRepsitoryTests
     {
-        IRepository repository = new MemoryRepository(new TestIdFactory());
+        IRepository<dynamic> repository = new DynamicMemoryRepository(new TestIdFactory());
         Guid[] ids = new Guid[0];
 
         public MemoryRepsitoryTests()
@@ -36,7 +34,7 @@ namespace UnitTests
         public void RetrievePeopleTest()
         {
             var people = repository.GetAll("Person").Result;
-            Assert.True(people.Count() == 2);            
+            Assert.True(people.Count() == 2);
         }
 
         [Fact]
