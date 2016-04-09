@@ -179,7 +179,6 @@ namespace NoSql.Repositories
         }
     }
 
-
     public class MemoryRepository<T> : IRepository<T> where T: IIdentifier
     {
         private ConcurrentDictionary<string, ConcurrentDictionary<Guid, T>> dictionary =

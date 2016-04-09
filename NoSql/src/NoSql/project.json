@@ -15,7 +15,7 @@
     "Microsoft.Extensions.Logging.Console": "1.0.0-rc1-final",
     "Microsoft.Extensions.Logging.Debug": "1.0.0-rc1-final",
     "Models": "1.0.0-*",
-    "Newtonsoft.Json": "8.0.2",
+    "Newtonsoft.Json": "8.0.3",
     "Newtonsoft.Json.Schema": "2.0.2"
   },
 
@@ -26,10 +26,9 @@
   "frameworks": {
     "dnx451": {
       "dependencies": {
-        "MongoDB.Driver": "2.2.3"
+        "MongoDB.Driver": "2.2.2"
       }
-    },
-    "dnxcore50": { }
+    }
   },
 
   "exclude": [
