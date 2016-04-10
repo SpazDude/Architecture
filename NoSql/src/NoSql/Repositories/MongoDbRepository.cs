@@ -11,18 +11,29 @@ namespace NoSql.Repositories
     {
         private string _connectionString;
         private string _database;
+        private IIdFactory _idFactory;
 
-        public MongoDbRepository(string connectionString, string database)
+        public MongoDbRepository(IIdFactory idFactory, string connectionString, string database)
         {
+            _idFactory = idFactory;
             _connectionString = connectionString;
             _database = database;
         }
 
-        private IMongoCollection<object> GetCollection(string resourceName)
+        private IMongoDatabase GetDatabase()
         {
             var client = new MongoClient(_connectionString);
-            var database = client.GetDatabase(_database);
-            return database.GetCollection<dynamic>(resourceName);
+            return client.GetDatabase(_database);
+        }
+
+        private IMongoCollection<object> GetCollection(string resourceName)
+        {
+            return GetDatabase().GetCollection<dynamic>(resourceName);
+        }
+
+        public void DeleteResources(string resource)
+        {
+            GetDatabase().DropCollection(resource);
         }
 
         public async Task<Guid[]> Create(string resource, params dynamic[] items)
@@ -30,7 +41,7 @@ namespace NoSql.Repositories
             var collection = GetCollection(resource);
             foreach (var item in items)
             {
-                item.Id = Guid.NewGuid();
+                item.Id = _idFactory.NewGuid();
             }
             await collection.InsertManyAsync(items);
             return items.Select(x => (Guid)x.Id).ToArray();
@@ -73,7 +84,6 @@ namespace NoSql.Repositories
                  await collection.UpdateOneAsync(Builders<dynamic>.Filter.Eq("Id", ((IId)x).Id), x)
             ).ToArray();
             await Task.WhenAll(tasks);
-        }
-        
+        }        
     }
 }
