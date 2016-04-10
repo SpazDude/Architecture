@@ -52,14 +52,16 @@ namespace UnitTests
         public void VerifyExistFunction()
         {
             var id = new Guid("00000000000000000000000000000001");
-            Assert.True(repository.Exist("Person", id).Result[0]);
+            var results = repository.Exist("Person", id).Result;
+            Assert.True(results.All(x=> x));
         }
 
         [Fact]
         public void VerifyReplacementValues()
         {
             var id = new Guid("00000000000000000000000000000001");
-            Assert.True(repository.GetById("Person", id).Result[0].Name == "Jane Buck");
+            var results = repository.GetById("Person", id).Result;
+            Assert.True(results.All(x=> x.Name == "Jane Buck"));
         }
     }
 }

@@ -26,9 +26,9 @@ namespace NoSql.Repositories
             return client.GetDatabase(_database);
         }
 
-        private IMongoCollection<object> GetCollection(string resourceName)
+        private IMongoCollection<BsonDocument> GetCollection(string resourceName)
         {
-            return GetDatabase().GetCollection<dynamic>(resourceName);
+            return GetDatabase().GetCollection<BsonDocument>(resourceName);
         }
 
         public void DeleteResources(string resource)
@@ -36,15 +36,16 @@ namespace NoSql.Repositories
             GetDatabase().DropCollection(resource);
         }
 
-        public async Task<Guid[]> Create(string resource, params dynamic[] items)
+        public async Task<IEnumerable<Guid>> Create(string resource, params dynamic[] items)
         {
             var collection = GetCollection(resource);
             foreach (var item in items)
             {
                 item.Id = _idFactory.NewGuid();
             }
-            await collection.InsertManyAsync(items);
-            return items.Select(x => (Guid)x.Id).ToArray();
+            var bsonItems = items.Select(x => new BsonDocument(x));
+            await collection.InsertManyAsync(bsonItems);
+            return items.Select(x => (Guid)x.Id);
         }
 
         public async Task Delete(string resource, params Guid[] Ids)
@@ -53,24 +54,24 @@ namespace NoSql.Repositories
             await collection.DeleteManyAsync(x => Ids.Any(y => ((IId)x).Id == y));
         }
 
-        public Task<bool[]> Exist(string resource, params Guid[] Ids)
+        public Task<IEnumerable<bool>> Exist(string resource, params Guid[] Ids)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<dynamic[]> GetAll(string resource)
+        public async Task<IEnumerable<dynamic>> GetAll(string resource)
         {
             var collection = GetCollection(resource);
             var result = await collection.FindAsync(x => true);
             return result.ToList().ToArray();
         }
 
-        public Task<dynamic[]> GetByExample(string resource, dynamic jsonText)
+        public Task<IEnumerable<dynamic>> GetByExample(string resource, dynamic jsonText)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<dynamic[]> GetById(string resource, params Guid[] Ids)
+        public async Task<IEnumerable<dynamic>> GetById(string resource, params Guid[] Ids)
         {
             var collection = GetCollection(resource);
             var result = await collection.FindAsync(x => Ids.Any(y => ((IId)x).Id == y));
@@ -80,8 +81,9 @@ namespace NoSql.Repositories
         public async Task Update(string resource, params dynamic[] items)
         {
             var collection = GetCollection(resource);
-            var tasks = items.Select(async x =>
-                 await collection.UpdateOneAsync(Builders<dynamic>.Filter.Eq("Id", ((IId)x).Id), x)
+            var bsonItems = items.Select(x => new BsonDocument(x));
+            var tasks = bsonItems.Select(async x =>
+                 await collection.UpdateOneAsync(Builders<BsonDocument>.Filter.Eq("Id", ((IId)x).Id), x)
             ).ToArray();
             await Task.WhenAll(tasks);
         }        

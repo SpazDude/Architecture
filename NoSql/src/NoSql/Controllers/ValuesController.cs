@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNet.Mvc;
 using NoSql.Repositories;
+using System.Collections.Generic;
 
 namespace NoSql.Controllers
 {
@@ -17,14 +18,14 @@ namespace NoSql.Controllers
 
         // GET: api/values
         [HttpGet]
-        public async Task<dynamic[]> Get(string resource)
+        public async Task<IEnumerable<dynamic>> Get(string resource)
         {
             return await _repository.GetAll(resource);
         }
 
         // GET api/values/5
         [HttpGet("{id}")]
-        public async Task<dynamic[]> Get(string resource, params Guid[] id)
+        public async Task<IEnumerable<dynamic>> Get(string resource, params Guid[] id)
         {
             return await _repository.GetById(resource, id);
         }

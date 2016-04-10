@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNet.Mvc;
 using Newtonsoft.Json.Linq;
 using NoSql.Repositories;
+using System.Collections.Generic;
 
 namespace NoSql.Controllers
 {
@@ -18,14 +19,14 @@ namespace NoSql.Controllers
 
         // GET: api/values
         [HttpGet]
-        public async Task<JObject[]> Get(string resource)
+        public async Task<IEnumerable<JObject>> Get(string resource)
         {
             return await _repository.GetAll(resource);
         }
 
         // GET api/values/5
         [HttpGet("{id}")]
-        public async Task<JObject[]> Get(string resource, Guid id)
+        public async Task<IEnumerable<JObject>> Get(string resource, Guid id)
         {
             return await _repository.GetById(resource, id);
         }
