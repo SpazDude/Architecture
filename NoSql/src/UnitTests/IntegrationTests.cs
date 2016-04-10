@@ -1,25 +1,17 @@
-﻿using Microsoft.AspNet.Builder;
-using Microsoft.AspNet.Hosting;
+﻿using Microsoft.AspNet.Hosting;
 using Microsoft.AspNet.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.PlatformAbstractions;
 using NoSql;
 using NoSql.Repositories;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace UnitTests
 {
     public class IntegrationTests
     {
-        private readonly Action<IApplicationBuilder> _app;
-        private readonly Action<IServiceCollection> _services;
-
-        private TestServer CreateTestServer()
+         private TestServer CreateTestServer()
         {
             return TestServer.Create(app =>
             {

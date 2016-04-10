@@ -26,8 +26,12 @@ namespace NoSql
         {
             // Add framework services.
             services.AddMvc();
-            services.AddScoped<IRepository<dynamic>, DynamicMemoryRepository>();
-            services.AddScoped<IRepository<JObject>, JObjectMemoryRepository>();
+            services.AddScoped<IRepository<dynamic>, MongoDbRepository>(
+                (_) => new MongoDbRepository(
+                    Configuration["Data:MongoDbConnection:ConnectionString"],
+                    Configuration["Data:MongoDbConnection:Database"]));
+            //services.AddScoped<IRepository<dynamic>, DynamicMemoryRepository>();
+            //services.AddScoped<IRepository<JObject>, JObjectMemoryRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -35,11 +39,8 @@ namespace NoSql
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
-
             app.UseIISPlatformHandler();
-
             app.UseStaticFiles();
-
             app.UseMvc();
         }
 
