@@ -26,7 +26,7 @@ namespace NoSql
         {
             // Add framework services.
             services.AddMvc();
-            services.AddScoped<IRepository<dynamic>, MongoDbRepository>(
+            services.AddScoped<IRepository, MongoDbRepository>(
                 (_) => new MongoDbRepository( new IdFactory(),
                     Configuration["Data:MongoDbConnection:ConnectionString"],
                     Configuration["Data:MongoDbConnection:Database"]));

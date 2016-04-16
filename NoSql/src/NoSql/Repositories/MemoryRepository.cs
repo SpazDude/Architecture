@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using MongoDB.Bson;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -7,37 +8,34 @@ using System.Threading.Tasks;
 
 namespace NoSql.Repositories
 {
-    public class DynamicMemoryRepository : IRepository<object>
+    public class MemoryRepository : IRepository
     {
-        private ConcurrentDictionary<string, ConcurrentDictionary<Guid, dynamic>> dictionary =
-            new ConcurrentDictionary<string, ConcurrentDictionary<Guid, dynamic>>();
+        private ConcurrentDictionary<string, ConcurrentDictionary<ObjectId, dynamic>> dictionary =
+            new ConcurrentDictionary<string, ConcurrentDictionary<ObjectId, dynamic>>();
 
         private IIdFactory _idFactory;
 
-        public DynamicMemoryRepository(IIdFactory idFactory)
+        public MemoryRepository(IIdFactory idFactory)
         {
             _idFactory = idFactory;
         }
 
-        public Task<IEnumerable<Guid>> Create(string resource, params dynamic[] items)
+        public async Task Create(string resource, params dynamic[] items)
         {
-            return Task<IEnumerable<Guid>>.Run(() =>
+            if (!dictionary.ContainsKey(resource))
             {
-                foreach (dynamic item in items)
-                {
-                    var guid = _idFactory.NewGuid();
-                    item.Id = guid;
-                    if (!dictionary.ContainsKey(resource))
-                    {
-                        dictionary.TryAdd(resource, new ConcurrentDictionary<Guid, dynamic>());
-                    }
-                    dictionary[resource].AddOrUpdate(guid, g => item, (g, i) => item);
-                }
-                return items.Select(item => (Guid)(item.Id));
-            });
+                dictionary.TryAdd(resource, new ConcurrentDictionary<ObjectId, dynamic>());
+            }
+            var tasks = items.Select(async x => await Task.Run(() =>
+            {
+                var id = _idFactory.NewId();
+                x._id = id;
+                dictionary[resource].AddOrUpdate(id, g => x, (g, i) => x);
+            }));
+            await Task.WhenAll(tasks);   
         }
 
-        public async Task Delete(string resource, params Guid[] Ids)
+        public async Task Delete(string resource, params ObjectId[] Ids)
         {
             await Task.Run(() =>
             {
@@ -49,7 +47,7 @@ namespace NoSql.Repositories
             });
         }
 
-        public Task<IEnumerable<bool>> Exist(string resource, params Guid[] Ids)
+        public Task<IEnumerable<bool>> Exist(string resource, params ObjectId[] Ids)
         {
             return Task<bool[]>.Run(() =>
             {
@@ -70,7 +68,7 @@ namespace NoSql.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<dynamic>> GetById(string resource, params Guid[] Ids)
+        public Task<IEnumerable<dynamic>> GetById(string resource, params ObjectId[] Ids)
         {
             return Task<IEnumerable<string>>.Run(() =>
             {
@@ -84,7 +82,7 @@ namespace NoSql.Repositories
             {
                 Parallel.ForEach(items, item =>
                 {
-                    dictionary[resource][item.Id] = item;
+                    dictionary[resource][item._id] = item;
                 });
             });
         }
@@ -92,6 +90,6 @@ namespace NoSql.Repositories
 
     public interface IIdentifier
     {
-        Guid Id { get; set; }
+        ObjectId Id { get; set; }
     }
 }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace NoSql.Repositories
 {
-    public class MongoDbRepository : IRepository<object>
+    public class MongoDbRepository : IRepository
     {
         private string _connectionString;
         private string _database;
@@ -36,25 +36,20 @@ namespace NoSql.Repositories
             GetDatabase().DropCollection(resource);
         }
 
-        public async Task<IEnumerable<Guid>> Create(string resource, params dynamic[] items)
+        public async Task Create(string resource, params dynamic[] items)
         {
             var collection = GetCollection(resource);
-            foreach (var item in items)
-            {
-                item.Id = _idFactory.NewGuid();
-            }
             var bsonItems = items.Select(x => new BsonDocument(x));
             await collection.InsertManyAsync(bsonItems);
-            return items.Select(x => (Guid)x.Id);
         }
 
-        public async Task Delete(string resource, params Guid[] Ids)
+        public async Task Delete(string resource, params ObjectId[] Ids)
         {
             var collection = GetCollection(resource);
-            await collection.DeleteManyAsync(x => Ids.Any(y => ((IId)x).Id == y));
+            await collection.DeleteManyAsync(x => Ids.Any(y => ((IId)x)._id == y));
         }
 
-        public Task<IEnumerable<bool>> Exist(string resource, params Guid[] Ids)
+        public Task<IEnumerable<bool>> Exist(string resource, params ObjectId[] Ids)
         {
             throw new NotImplementedException();
         }
@@ -71,10 +66,10 @@ namespace NoSql.Repositories
             throw new NotImplementedException();
         }
 
-        public async Task<IEnumerable<dynamic>> GetById(string resource, params Guid[] Ids)
+        public async Task<IEnumerable<dynamic>> GetById(string resource, params ObjectId[] Ids)
         {
             var collection = GetCollection(resource);
-            var result = await collection.FindAsync(x => Ids.Any(y => ((IId)x).Id == y));
+            var result = await collection.FindAsync(x => Ids.Any(y => ((IId)x)._id == y));
             return result.ToList().ToArray();
         }
 
@@ -83,9 +78,9 @@ namespace NoSql.Repositories
             var collection = GetCollection(resource);
             var bsonItems = items.Select(x => new BsonDocument(x));
             var tasks = bsonItems.Select(async x =>
-                 await collection.UpdateOneAsync(Builders<BsonDocument>.Filter.Eq("Id", ((IId)x).Id), x)
+                 await collection.UpdateOneAsync(Builders<BsonDocument>.Filter.Eq("Id", ((IId)x)._id), x)
             ).ToArray();
             await Task.WhenAll(tasks);
-        }        
+        }
     }
 }

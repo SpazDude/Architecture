@@ -3,15 +3,16 @@ using System.Threading.Tasks;
 using Microsoft.AspNet.Mvc;
 using NoSql.Repositories;
 using System.Collections.Generic;
+using MongoDB.Bson;
 
 namespace NoSql.Controllers
 {
     [Route("api/{resource}")]
     public class ValuesController : Controller
     {
-        private IRepository<dynamic> _repository;
+        private IRepository _repository;
 
-        public ValuesController(IRepository<dynamic> repository)
+        public ValuesController(IRepository repository)
         {
             _repository = repository;
         }
@@ -25,7 +26,7 @@ namespace NoSql.Controllers
 
         // GET api/values/5
         [HttpGet("{id}")]
-        public async Task<IEnumerable<dynamic>> Get(string resource, params Guid[] id)
+        public async Task<IEnumerable<dynamic>> Get(string resource, params ObjectId[] id)
         {
             return await _repository.GetById(resource, id);
         }
@@ -46,7 +47,7 @@ namespace NoSql.Controllers
 
         // DELETE api/values/5
         [HttpDelete("{id}")]
-        public void Delete(string resource, params Guid[] id)
+        public void Delete(string resource, params ObjectId[] id)
         {
             _repository.Delete(resource, id);
         }
