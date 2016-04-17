@@ -1,0 +1,3 @@
+[submodule "NoSql/src/Mvc"]
+	path = NoSql/src/Mvc
+	url = https://github.com/aspnet/Mvc.git
