@@ -15,6 +15,8 @@
     "Microsoft.Extensions.Logging.Console": "1.0.0-rc1-final",
     "Microsoft.Extensions.Logging.Debug": "1.0.0-rc1-final",
     "Models": "1.0.0-*",
+    "Autofac": "4.0.0-rc1-177",
+    "Autofac.Extensions.DependencyInjection": "4.0.0-rc1-177",
     "MongoDB.Driver": "2.2.3",
     "Newtonsoft.Json": "8.0.3",
     "Newtonsoft.Json.Schema": "2.0.2"

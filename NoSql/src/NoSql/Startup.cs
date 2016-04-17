@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNet.Builder;
+﻿using Autofac;
+using Autofac.Extensions.DependencyInjection;
+using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using NoSql.Repositories;
-using Newtonsoft.Json.Linq;
+using System;
 
 namespace NoSql
 {
@@ -22,14 +23,22 @@ namespace NoSql
         public IConfigurationRoot Configuration { get; set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             // Add framework services.
             services.AddMvc();
-            services.AddScoped<IRepository, MongoDbRepository>(
-                (_) => new MongoDbRepository( new IdFactory(),
-                    Configuration["Data:MongoDbConnection:ConnectionString"],
-                    Configuration["Data:MongoDbConnection:Database"]));
+
+            // Add Autofac
+            var builder = new ContainerBuilder();
+            builder.RegisterModule<DefaultModule>();
+            builder.Populate(services);
+            var container = builder.Build();
+            return container.Resolve<IServiceProvider>();
+
+            //services.AddScoped<IRepository, MongoDbRepository>(
+            //    (_) => new MongoDbRepository( new IdFactory(),
+            //        Configuration["Data:MongoDbConnection:ConnectionString"],
+            //        Configuration["Data:MongoDbConnection:Database"]));
             //services.AddScoped<IRepository<dynamic>, DynamicMemoryRepository>();
             //services.AddScoped<IRepository<JObject>, JObjectMemoryRepository>();
         }

@@ -1,18 +1,17 @@
-﻿using MongoDB.Bson;
-using System;
+﻿using System;
 
 namespace NoSql.Repositories
 {
     public interface IIdFactory
     {
-        ObjectId NewId();
+        Guid NewId();
     }
 
     public class IdFactory : IIdFactory
     {
-        public ObjectId NewId()
+        public Guid NewId()
         {
-            return ObjectId.GenerateNewId();
+            return Guid.NewGuid();
         }
     }
 
@@ -20,9 +19,9 @@ namespace NoSql.Repositories
     {
         private int count = 0;
 
-        public ObjectId NewId()
+        public Guid NewId()
         {
-            return ObjectId.GenerateNewId(count++);
+            return new Guid(count, 0, 0, new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 });
         }
     }
 }
