@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Microsoft.AspNet.Mvc;
 using DynamicApi.Web.Models;
 using DynamicApi.Web.Repositories;
@@ -9,9 +6,9 @@ using DynamicApi.Web.Repositories;
 namespace DynamicApi.Web.Controllers
 {
     [Route("api/[controller]")]
-    public class ValueController : Controller<Value>
-{
-        public ValueController(IRepository<Value> repository): base (repository){}
+    public class ValuesController : Controller<Values>
+    {
+        public ValuesController(IRepository<Values> repository) : base(repository) { }
     }
 
     public class Controller<T> : Controller where T : IId
@@ -25,9 +22,9 @@ namespace DynamicApi.Web.Controllers
 
         // GET: api/values
         [HttpGet]
-        public IEnumerable<IId> Get()
+        public IEnumerable<T> Get()
         {
-            throw new NotImplementedException();
+            return _repository.GetAll();
         }
 
         // GET api/values/5

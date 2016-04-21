@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNet.Builder;
+﻿using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using DynamicApi.Web.Repositories;
+using DynamicApi.Web.Controllers;
 
 namespace DynamicApi.Web
 {
@@ -14,6 +12,8 @@ namespace DynamicApi.Web
     {
         public Startup(IHostingEnvironment env)
         {
+            new ControllerGenerator().Load();
+
             // Set up configuration sources.
             var builder = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json")
@@ -28,6 +28,8 @@ namespace DynamicApi.Web
         {
             // Add framework services.
             services.AddMvc();
+
+            services.AddSingleton(typeof(IRepository<>), typeof(Repository<>));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
