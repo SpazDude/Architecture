@@ -1,11 +1,12 @@
-﻿using DynamicApi.Web.Models;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Microsoft.AspNet.Mvc;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using DynamicApi.Web.Models;
 
 namespace DynamicApi.Web.Controllers
 {
@@ -20,12 +21,12 @@ namespace DynamicApi.Web.Controllers
 
             var declarations = types.Select(x => "[Route(\"api/[controller]\")] \r\n" +
                 $"public class {x.Name}Controller : Controller<{x.FullName}> {{ " +
-                $"public ValuesController(IRepository<{x.FullName}> repository) : base(repository) {{ }} }}"
+                $"public ValuesController(DynamicApi.Web.Repositories.IRepository<{x.FullName}> repository) : base(repository) {{ }} }}"
             );
 
             var body = string.Join("\r\n", declarations);
 
-            return CSharpSyntaxTree.ParseText($"namespace DynamicApi.Web.Controllers {{ {body} }}");
+            return CSharpSyntaxTree.ParseText($"using Microsoft.AspNet.Mvc;namespace DynamicApi.Web.Controllers {{ {body} }}");
         }
 
         string assemblyName = Path.GetRandomFileName();
@@ -33,7 +34,8 @@ namespace DynamicApi.Web.Controllers
         {
             MetadataReference.CreateFromFile(typeof(object).Assembly.Location),
             MetadataReference.CreateFromFile(typeof(Enumerable).Assembly.Location),
-            MetadataReference.CreateFromFile(new UriBuilder(typeof(IId).Assembly.CodeBase).Path)
+            MetadataReference.CreateFromFile(typeof(RouteAttribute).Assembly.Location),
+            MetadataReference.CreateFromFile(typeof(IId).Assembly.ManifestModule.ToString())
         };
 
         public void Load()

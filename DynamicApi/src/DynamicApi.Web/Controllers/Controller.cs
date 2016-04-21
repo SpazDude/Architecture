@@ -5,11 +5,11 @@ using DynamicApi.Web.Repositories;
 
 namespace DynamicApi.Web.Controllers
 {
-    [Route("api/[controller]")]
-    public class ValuesController : Controller<Values>
-    {
-        public ValuesController(IRepository<Values> repository) : base(repository) { }
-    }
+    //[Route("api/[controller]")]
+    //public class ValuesController : Controller<Values>
+    //{
+    //    public ValuesController(IRepository<Values> repository) : base(repository) { }
+    //}
 
     public class Controller<T> : Controller where T : IId
     {
