@@ -7,12 +7,20 @@ using Microsoft.AspNet.Mvc;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using DynamicApi.Web.Models;
+using Microsoft.CSharp;
+using System.CodeDom.Compiler;
 
 namespace DynamicApi.Web.Controllers
 {
     public class ControllerGenerator
     {
         private SyntaxTree Code()
+        {
+            string body = Source();
+            return CSharpSyntaxTree.ParseText($"using Microsoft.AspNet.Mvc;namespace DynamicApi.Web.Controllers {{ {body} }}");
+        }
+
+        private static string Source()
         {
             var type = typeof(IId);
             var types = AppDomain.CurrentDomain.GetAssemblies()
@@ -25,17 +33,16 @@ namespace DynamicApi.Web.Controllers
             );
 
             var body = string.Join("\r\n", declarations);
-
-            return CSharpSyntaxTree.ParseText($"using Microsoft.AspNet.Mvc;namespace DynamicApi.Web.Controllers {{ {body} }}");
+            return body;
         }
-
+        
         string assemblyName = Path.GetRandomFileName();
         MetadataReference[] references = new MetadataReference[]
         {
             MetadataReference.CreateFromFile(typeof(object).Assembly.Location),
             MetadataReference.CreateFromFile(typeof(Enumerable).Assembly.Location),
             MetadataReference.CreateFromFile(typeof(RouteAttribute).Assembly.Location),
-            MetadataReference.CreateFromFile(typeof(IId).Assembly.ManifestModule.ToString())
+            //MetadataReference.CreateFromFile(typeof(IId).Assembly.ManifestModule.ToString())
         };
 
         public void Load()
