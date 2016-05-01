@@ -30,8 +30,8 @@ namespace DynamicApi.Web
             // Add framework services.
             services.AddMvc();
 
-            services.AddMvc().AddControllersAsServices(new[] { typeof(Controller<>) });
-            services.Replace(ServiceDescriptor.Singleton<IControllerFactory, GenericControllerFactory>());
+            //services.AddMvc().AddControllersAsServices(new[] { typeof(Controller<>) });
+            //services.Replace(ServiceDescriptor.Singleton<IControllerFactory, GenericControllerFactory>());
             //services.Replace(ServiceDescriptor.Transient<IControllerActivator, GenericControllerActivator>());
             services.AddSingleton(typeof(IRepository<>), typeof(Repository<>));
         }
@@ -42,14 +42,14 @@ namespace DynamicApi.Web
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
-            //app.UseIISPlatformHandler();
+            app.UseIISPlatformHandler();
 
-            //app.UseStaticFiles();
+            app.UseStaticFiles();
 
             app.UseMvc();
         }
 
         // Entry point for the application.
         public static void Main(string[] args) => WebApplication.Run<Startup>(args);
-}
+    }
 }
