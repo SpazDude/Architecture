@@ -48,39 +48,41 @@ namespace DynamicApi.Web
 
             MetadataReference[] references = new MetadataReference[]
            {
-                MetadataReference.CreateFromFile(typeof(object).Assembly.Location),
-                MetadataReference.CreateFromFile(typeof(Enumerable).Assembly.Location),
-                MetadataReference.CreateFromFile(typeof(RouteAttribute).Assembly.Location),
+                MetadataReference.CreateFromFile(typeof(object).GetTypeInfo().Assembly.Location),
+                MetadataReference.CreateFromFile(typeof(Attribute).GetTypeInfo().Assembly.Location),
+                MetadataReference.CreateFromFile(typeof(Controller).GetTypeInfo().Assembly.Location),
+                MetadataReference.CreateFromFile(typeof(RouteAttribute).GetTypeInfo().Assembly.Location),
                 reference
            };
 
-            //var compilation = CSharpCompilation.Create(
-            //    assemblyName,
-            //    syntaxTrees: new[] { syntaxTree },
-            //    references: references,
-            //    options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+            var compilation = CSharpCompilation.Create(
+                assemblyName,
+                syntaxTrees: new[] { syntaxTree },
+                references: references,
+                options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
 
-            //using (var ms = new MemoryStream())
-            //{
-            //    EmitResult result = compilation.Emit(ms);
+            using (var ms = new MemoryStream())
+            {
+                EmitResult result = compilation.Emit(ms);
 
-            //    if (!result.Success)
-            //    {
-            //        IEnumerable<Diagnostic> failures = result.Diagnostics.Where(diagnostic =>
-            //            diagnostic.IsWarningAsError ||
-            //            diagnostic.Severity == DiagnosticSeverity.Error);
+                if (!result.Success)
+                {
+                    IEnumerable<Diagnostic> failures = result.Diagnostics.Where(diagnostic =>
+                        diagnostic.IsWarningAsError ||
+                        diagnostic.Severity == DiagnosticSeverity.Error);
 
-            //        foreach (Diagnostic diagnostic in failures)
-            //        {
-            //            Console.Error.WriteLine("{0}: {1}", diagnostic.Id, diagnostic.GetMessage());
-            //        }
-            //    }
-            //    else
-            //    {
-            //        ms.Seek(0, SeekOrigin.Begin);
-            //        Assembly assembly = Assembly.Load(ms.ToArray());
-            //    }
-            //}
+                    foreach (Diagnostic diagnostic in failures)
+                    {
+                        Console.Error.WriteLine("{0}: {1}", diagnostic.Id, diagnostic.GetMessage());
+                    }
+                }
+                else
+                {
+                    ms.Seek(0, SeekOrigin.Begin);
+                    Assembly.Load(new AssemblyName(assemblyName));
+                    //var myAssembly = Assembly.Load(ms.ToArray());
+                }
+            }
         }
 
         public Startup(IHostingEnvironment env)
@@ -123,6 +125,6 @@ namespace DynamicApi.Web
         }
 
         // Entry point for the application.
-        public unsafe static void Main(string[] args) => WebApplication.Run<Startup>(args);
+        public static void Main(string[] args) => WebApplication.Run<Startup>(args);
     }
 }
