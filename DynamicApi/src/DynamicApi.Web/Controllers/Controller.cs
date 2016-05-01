@@ -8,9 +8,12 @@ namespace DynamicApi.Web.Controllers
     //[Route("api/[controller]")]
     //public class ValuesController : Controller<Values>
     //{
-    //    public ValuesController(IRepository<Values> repository) : base(repository) { }
+    //    public ValuesController(IRepository<Values> repository) : base(repository)
+    //    {
+    //    }
     //}
 
+    [Route("api/{model}")]
     public class Controller<T> : Controller where T : IId
     {
         private IRepository<T> _repository;
@@ -19,7 +22,7 @@ namespace DynamicApi.Web.Controllers
         {
             _repository = repository;
         }
-
+        
         // GET: api/values
         [HttpGet]
         public IEnumerable<T> Get()
